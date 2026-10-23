@@ -1,0 +1,484 @@
+
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TraceGuard | Two-Phone Location Share</title>
+<style>
+:root {
+  --bg:#06101e;
+  --panel:#0d1c30;
+  --line:#1c3c5c;
+  --blue:#38bdf8;
+  --cyan:#67e8f9;
+  --text:#eaf6ff;
+  --muted:#91a9bf;
+  --green:#5ee6b0;
+}
+* { box-sizing:border-box; }
+body {
+  margin:0;
+  font-family:Segoe UI,Arial,sans-serif;
+  color:var(--text);
+  background:radial-gradient(ellipse at top,#123454,var(--bg) 65%);
+  min-height:100vh;
+}
+.container { width:min(1050px,92%); margin:auto; padding:25px 0 45px; }
+header {
+  display:flex; align-items:center; justify-content:space-between;
+  gap:12px; margin-bottom:32px;
+}
+.brand { display:flex; align-items:center; gap:12px; }
+.logo {
+  width:48px;height:48px;border-radius:14px;
+  display:grid;place-items:center;font-size:27px;
+  color:#031321;background:linear-gradient(135deg,var(--blue),var(--cyan));
+  box-shadow:0 0 25px #38bdf844;
+}
+h1 { font-size:20px;letter-spacing:1px;margin:0; }
+.brand p { color:var(--muted);font-size:12px;margin:5px 0 0; }
+.badge {
+  border:1px solid #28618a;border-radius:99px;padding:8px 11px;
+  font-size:11px;color:var(--cyan);
+}
+.hero { margin:25px 0; }
+.eyebrow { color:var(--cyan);font-size:11px;font-weight:bold;letter-spacing:2px; }
+h2 { font-size:clamp(28px,5vw,43px);line-height:1.1;margin:12px 0; }
+.hero p,.desc { color:var(--muted);font-size:14px;line-height:1.7; }
+.grid { display:grid;grid-template-columns:1fr 1fr;gap:17px; }
+.card {
+  background:linear-gradient(150deg,#10243bee,#0a1727f5);
+  border:1px solid var(--line);border-radius:19px;padding:22px;
+  box-shadow:0 15px 40px #0003;
+}
+.card h3 { margin:0 0 8px;font-size:18px; }
+label { display:block;font-size:12px;color:#bad5e9;font-weight:bold;margin:15px 0 7px; }
+input {
+  width:100%;padding:13px;border:1px solid #284966;border-radius:10px;
+  background:#071625;color:white;font-size:14px;outline:none;
+}
+input:focus { border-color:var(--blue); }
+button {
+  border:0;border-radius:10px;padding:12px 15px;font-weight:bold;
+  font-size:13px;cursor:pointer;transition:.2s;
+}
+button:hover { transform:translateY(-1px); }
+.primary { background:linear-gradient(100deg,var(--blue),var(--cyan));color:#031321; }
+.secondary { background:#132a40;color:#d4edff;border:1px solid #2a4b68; }
+.actions { display:flex;gap:9px;flex-wrap:wrap;margin-top:15px; }
+.status {
+  margin-top:15px;padding:13px;border:1px solid #1b3b55;
+  border-radius:10px;background:#091827;color:#b6cce0;
+  font-size:13px;line-height:1.6;overflow-wrap:anywhere;
+}
+.status.ok { border-color:#1b6b5a;color:#9df1d4; }
+.status.warn { border-color:#6b5931;color:#ffe1a0; }
+.result {
+  margin-top:14px;padding:14px;border-radius:11px;
+  background:#091827;border:1px solid #1d405b;
+}
+.result small { color:var(--muted); }
+.result strong { display:block;margin:6px 0 14px;overflow-wrap:anywhere; }
+.result a { color:var(--cyan);font-size:13px; }
+.steps { display:grid;gap:13px;margin-top:16px; }
+.step { display:flex;gap:12px;align-items:flex-start; }
+.number {
+  flex:0 0 29px;height:29px;border:1px solid #28618a;border-radius:9px;
+  display:grid;place-items:center;color:var(--cyan);font-weight:bold;font-size:12px;
+}
+.step p { color:var(--muted);font-size:13px;line-height:1.6;margin:3px 0 0; }
+.step b { color:var(--text); }
+.hidden { display:none!important; }
+footer { margin-top:25px;padding-top:17px;border-top:1px solid var(--line);color:#7893aa;font-size:12px;line-height:1.7; }
+@media(max-width:720px) {
+  .grid { grid-template-columns:1fr; }
+  header { align-items:flex-start; }
+  .badge { font-size:9px; }
+  .card { padding:18px; }
+}
+</style>
+</head>
+<body>
+<div class="container">
+
+<header>
+  <div class="brand">
+    <div class="logo">⌖</div>
+    <div>
+      <h1>TRACEGUARD</h1>
+      <p>Two-Phone Consent Location Share</p>
+    </div>
+  </div>
+  <div class="badge">● PERMISSION BASED</div>
+</header>
+
+<section class="hero">
+  <div class="eyebrow">LOCATION LAB / 02</div>
+  <h2>Location sharing.<br>Permission first.</h2>
+  <p>
+    Buat permintaan dari HP pertama, lalu biarkan pemilik HP kedua
+    memutuskan apakah ingin membagikan lokasinya. Nomor WhatsApp
+    hanya digunakan untuk membuka chat, bukan untuk mencari GPS.
+  </p>
+</section>
+
+<div class="grid">
+
+  <section class="card">
+    <h3>01 / Buat permintaan</h3>
+    <p class="desc">
+      Gunakan bagian ini pada HP pertama. Masukkan nomor penerima
+      dan alamat situs TraceGuard yang sudah di-host melalui HTTPS.
+    </p>
+
+    <label for="phone">Nomor WhatsApp penerima</label>
+    <input id="phone" inputmode="numeric"
+      placeholder="6281234567890" maxlength="15">
+
+    <label for="site">URL HTTPS situs ini</label>
+    <input id="site" type="url"
+      placeholder="https://situs-kamu.example">
+
+    <div class="actions">
+      <button class="primary" id="sendRequest">Buat Permintaan WhatsApp</button>
+      <button class="secondary" id="copyMessage">Salin Pesan</button>
+    </div>
+
+    <div class="status" id="requestStatus">
+      Masukkan nomor dan URL situs terlebih dahulu.
+      Pesan akan dibuka di WhatsApp untuk kamu kirim sendiri.
+    </div>
+  </section>
+
+  <section class="card">
+    <h3>02 / Bagikan lokasi</h3>
+    <p class="desc">
+      Bagian ini digunakan di HP kedua. Tekan tombol hanya jika
+      kamu sendiri ingin membagikan lokasi perangkatmu.
+    </p>
+
+    <div class="actions">
+      <button class="primary" id="getLocation">Setujui & Ambil Lokasi</button>
+      <button class="secondary" id="clearLocation">Bersihkan</button>
+    </div>
+
+    <div class="status" id="ownerStatus">
+      Belum ada lokasi yang diakses. Browser akan meminta izin
+      ketika kamu menekan tombol lokasi.
+    </div>
+
+    <div class="result hidden" id="locationResult">
+      <small>Koordinat perangkat</small>
+      <strong id="coordinates">—</strong>
+      <small>Akurasi yang dilaporkan perangkat</small>
+      <strong id="accuracy">—</strong>
+
+      <div class="actions">
+        <button class="primary" id="shareResult">Bagikan Tautan Hasil</button>
+        <button class="secondary" id="copyResult">Salin Tautan</button>
+      </div>
+
+      <p class="desc">
+        Tautan berisi koordinat. Kirim hanya kepada penerima yang
+        kamu pilih dan percaya.
+      </p>
+    </div>
+  </section>
+</div>
+
+<section class="card" style="margin-top:17px">
+  <h3>03 / Lihat lokasi yang dibagikan</h3>
+  <p class="desc">
+    Buka tautan hasil yang dikirim pemilik HP kedua.
+    Koordinat yang dibagikan akan muncul di bagian ini.
+  </p>
+
+  <div class="status" id="viewerStatus">
+    Belum ada tautan hasil yang dibuka.
+  </div>
+
+  <div class="result hidden" id="viewerResult">
+    <small>Koordinat yang dibagikan</small>
+    <strong id="viewerCoordinates">—</strong>
+    <small>Akurasi yang dilaporkan perangkat</small>
+    <strong id="viewerAccuracy">—</strong>
+    <a id="mapLink" href="#" target="_blank" rel="noopener noreferrer">
+      Buka lokasi di OpenStreetMap ↗
+    </a>
+  </div>
+</section>
+
+<section class="card" style="margin-top:17px">
+  <h3>Cara pengujian dua HP</h3>
+  <div class="steps">
+    <div class="step"><div class="number">1</div><p><b>HP pertama:</b> isi nomor HP kedua dan URL situs HTTPS. Buka WhatsApp lalu kirim permintaan.</p></div>
+    <div class="step"><div class="number">2</div><p><b>HP kedua:</b> buka tautan situs yang diterima, tekan tombol lokasi, lalu pilih Izinkan jika setuju.</p></div>
+    <div class="step"><div class="number">3</div><p><b>HP kedua:</b> pilih Bagikan Tautan Hasil dan kirim hasilnya kembali melalui WhatsApp.</p></div>
+    <div class="step"><div class="number">4</div><p><b>HP pertama:</b> buka tautan hasil yang diterima untuk melihat koordinat di peta.</p></div>
+  </div>
+
+  <div class="status warn">
+    <b>Privasi:</b> aplikasi ini tidak melacak secara diam-diam,
+    tidak mengakses perangkat tertaut WhatsApp, dan tidak mengetahui
+    lokasi dari nomor telepon. Pemilik perangkat harus menyetujui
+    permintaan lokasi dan memilih membagikan tautan hasilnya.
+  </div>
+</section>
+
+<footer>
+  TRACEGUARD · Educational privacy-first demo<br>
+  Versi ini tidak menggunakan database atau server untuk menyimpan koordinat.
+  Data lokasi pada tautan dapat dilihat siapa pun yang memiliki tautan tersebut.
+</footer>
+</div>
+
+<script>
+const $ = id => document.getElementById(id);
+
+function setStatus(id, message, type = "") {
+  const el = $(id);
+  el.className = "status" + (type ? " " + type : "");
+  el.textContent = message;
+}
+
+function getBaseURL() {
+  const raw = $("site").value.trim();
+
+  try {
+    const url = new URL(raw);
+    if (url.protocol !== "https:") return null;
+    return url.href.split("#")[0];
+  } catch {
+    return null;
+  }
+}
+
+function makeMessage(base) {
+  return "Hai! Ini permintaan berbagi lokasi untuk pengujian TraceGuard. " +
+    "Jika kamu setuju, buka tautan situs ini dan tekan tombol " +
+    "'Setujui & Ambil Lokasi'. Browser akan meminta izin. " +
+    "Kamu bebas menolak. Jika ingin berbagi, pilih 'Bagikan Tautan Hasil' " +
+    "dan kirim kembali tautannya. Tautan: " + base;
+}
+
+function getPhone() {
+  return $("phone").value.replace(/[\s()+-]/g, "");
+}
+
+function validPhone(phone) {
+  return /^\d{8,15}$/.test(phone);
+}
+
+$("sendRequest").addEventListener("click", () => {
+  const phone = getPhone();
+  const base = getBaseURL();
+
+  if (!validPhone(phone)) {
+    setStatus("requestStatus",
+      "Nomor tidak valid. Gunakan kode negara dan angka saja, misalnya 6281234567890.",
+      "warn");
+    return;
+  }
+
+  if (!base) {
+    setStatus("requestStatus",
+      "Masukkan URL HTTPS situs yang sudah online. File lokal atau localhost tidak bisa dibuka HP kedua.",
+      "warn");
+    return;
+  }
+
+  const url = "https://wa.me/" + phone +
+    "?text=" + encodeURIComponent(makeMessage(base));
+
+  window.open(url, "_blank", "noopener,noreferrer");
+  setStatus("requestStatus",
+    "WhatsApp dibuka. Periksa pesan lalu kirim sendiri jika sudah benar.",
+    "ok");
+});
+
+$("copyMessage").addEventListener("click", async () => {
+  const base = getBaseURL();
+
+  if (!base) {
+    setStatus("requestStatus",
+      "Masukkan URL HTTPS situs yang sudah online terlebih dahulu.",
+      "warn");
+    return;
+  }
+
+  try {
+    await navigator.clipboard.writeText(makeMessage(base));
+    setStatus("requestStatus",
+      "Pesan permintaan disalin. Tempelkan sendiri di chat WhatsApp.",
+      "ok");
+  } catch {
+    setStatus("requestStatus",
+      "Clipboard tidak tersedia di browser ini. Kamu bisa membuka WhatsApp dengan tombol di atas.",
+      "warn");
+  }
+});
+
+let currentShareURL = "";
+
+$("getLocation").addEventListener("click", () => {
+  if (!window.isSecureContext) {
+    setStatus("ownerStatus",
+      "Lokasi memerlukan HTTPS atau localhost. Untuk dua HP, host situs melalui HTTPS.",
+      "warn");
+    return;
+  }
+
+  if (!navigator.geolocation) {
+    setStatus("ownerStatus",
+      "Browser ini tidak mendukung geolokasi.",
+      "warn");
+    return;
+  }
+
+  $("getLocation").disabled = true;
+  setStatus("ownerStatus",
+    "Menunggu keputusan izin browser. Pilih Izinkan hanya jika kamu setuju.");
+
+  navigator.geolocation.getCurrentPosition(position => {
+    const c = position.coords;
+    const lat = c.latitude.toFixed(6);
+    const lon = c.longitude.toFixed(6);
+    const acc = Math.round(c.accuracy);
+
+    $("coordinates").textContent = lat + ", " + lon;
+    $("accuracy").textContent = "± " + acc + " meter";
+    $("locationResult").classList.remove("hidden");
+
+    // Data berada dalam URL fragment (#), bukan dikirim ke server.
+    const payload = {
+      lat: lat,
+      lon: lon,
+      accuracy: acc,
+      time: new Date(position.timestamp).toISOString()
+    };
+
+    currentShareURL = location.href.split("#")[0] +
+      "#shared-location=" +
+      encodeURIComponent(JSON.stringify(payload));
+
+    setStatus("ownerStatus",
+      "Lokasi dibaca setelah izin diberikan. Kamu dapat memilih apakah ingin membagikan tautan hasil.",
+      "ok");
+
+    $("getLocation").disabled = false;
+  }, error => {
+    const messages = {
+      1: "Izin lokasi ditolak. Tidak ada lokasi yang dibagikan.",
+      2: "Lokasi tidak tersedia. Periksa layanan lokasi perangkat.",
+      3: "Permintaan lokasi melewati batas waktu. Coba lagi."
+    };
+
+    setStatus("ownerStatus",
+      messages[error.code] || "Lokasi tidak dapat dibaca.",
+      "warn");
+    $("getLocation").disabled = false;
+  }, {
+    enableHighAccuracy: true,
+    timeout: 20000,
+    maximumAge: 0
+  });
+});
+
+async function shareCurrentLink() {
+  if (!currentShareURL) return;
+
+  if (navigator.share) {
+    try {
+      await navigator.share({
+        title: "TraceGuard — Lokasi yang saya bagikan",
+        text: "Saya memilih membagikan lokasi ini.",
+        url: currentShareURL
+      });
+      return;
+    } catch (error) {
+      if (error.name === "AbortError") return;
+    }
+  }
+
+  try {
+    await navigator.clipboard.writeText(currentShareURL);
+    setStatus("ownerStatus",
+      "Tautan disalin. Tempelkan sendiri di chat penerima yang kamu pilih.",
+      "ok");
+  } catch {
+    setStatus("ownerStatus",
+      "Browser tidak mendukung berbagi otomatis. Coba browser lain yang mendukung clipboard.",
+      "warn");
+  }
+}
+
+$("shareResult").addEventListener("click", shareCurrentLink);
+
+$("copyResult").addEventListener("click", async () => {
+  if (!currentShareURL) return;
+
+  try {
+    await navigator.clipboard.writeText(currentShareURL);
+    setStatus("ownerStatus",
+      "Tautan hasil disalin. Kirim hanya kepada penerima yang kamu pilih.",
+      "ok");
+  } catch {
+    setStatus("ownerStatus",
+      "Tidak dapat menyalin tautan otomatis. Coba tombol Bagikan Tautan Hasil.",
+      "warn");
+  }
+});
+
+$("clearLocation").addEventListener("click", () => {
+  currentShareURL = "";
+  $("locationResult").classList.add("hidden");
+  $("getLocation").disabled = false;
+  setStatus("ownerStatus",
+    "Hasil lokal dibersihkan. Tidak ada lokasi baru yang diakses.");
+});
+
+function readSharedLocation() {
+  const prefix = "#shared-location=";
+  const hash = location.hash;
+
+  if (!hash.startsWith(prefix)) return;
+
+  try {
+    const data = JSON.parse(
+      decodeURIComponent(hash.slice(prefix.length))
+    );
+
+    const lat = Number(data.lat);
+    const lon = Number(data.lon);
+    const accuracy = Number(data.accuracy);
+
+    if (!Number.isFinite(lat) || !Number.isFinite(lon) ||
+        Math.abs(lat) > 90 || Math.abs(lon) > 180) {
+      throw new Error("Koordinat tidak valid");
+    }
+
+    $("viewerCoordinates").textContent =
+      lat.toFixed(6) + ", " + lon.toFixed(6);
+    $("viewerAccuracy").textContent =
+      Number.isFinite(accuracy) ? "± " + Math.round(accuracy) + " meter" : "Tidak tersedia";
+
+    $("mapLink").href =
+      "https://www.openstreetmap.org/?mlat=" + lat +
+      "&mlon=" + lon + "#map=16/" + lat + "/" + lon;
+
+    $("viewerResult").classList.remove("hidden");
+    setStatus("viewerStatus",
+      "Tautan berisi koordinat yang dibagikan pemilik perangkat. Gunakan lokasi hanya sesuai izin yang diberikan.",
+      "ok");
+  } catch {
+    setStatus("viewerStatus",
+      "Tautan hasil tidak valid atau rusak.",
+      "warn");
+  }
+}
+
+readSharedLocation();
+</script>
+</body>
+</html>
