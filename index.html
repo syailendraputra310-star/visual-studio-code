@@ -2,294 +2,86 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Temukan Perangkat Saya</title>
-<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
-<style>
-*{box-sizing:border-box}
-body{margin:0;font-family:Arial,Helvetica,sans-serif;color:#202124;background:#fff}
-button,input{font:inherit}
-.topbar{height:76px;display:flex;align-items:center;gap:14px;padding:0 25px;border-bottom:1px solid #dadce0;position:relative;z-index:5;background:white}
-.google{font-size:29px;letter-spacing:-1.5px;font-weight:500;white-space:nowrap}
-.g1{color:#4285f4}.g2{color:#ea4335}.g3{color:#fbbc05}.g4{color:#4285f4}.g5{color:#34a853}.g6{color:#ea4335}
-.top-title{font-size:24px;color:#5f6368;white-space:nowrap}
-.top-right{margin-left:auto;display:flex;align-items:center;gap:23px;color:#5f6368}
-.avatar{height:40px;width:40px;border-radius:50%;background:#1a73e8;color:white;display:grid;place-items:center;font-size:20px}
-.app{display:grid;grid-template-columns:80px 390px minmax(0,1fr);height:calc(100vh - 76px);min-height:550px}
-.nav{border-right:1px solid #dadce0;padding-top:20px;background:#fff}
-.navitem{margin:0 8px 10px;padding:15px 0;text-align:center;border-radius:0 24px 24px 0;color:#5f6368;font-size:12px;cursor:pointer}
-.navitem.active{background:#e8f0fe;color:#1967d2}
-.navicon{display:block;font-size:23px;margin-bottom:7px}
-.sidebar{padding:28px 23px;overflow:auto;border-right:1px solid #dadce0;background:white}
-.back{font-size:14px;color:#5f6368;margin-bottom:25px}
-.device-head{display:flex;align-items:center;gap:16px}
-.phone-art{height:86px;width:67px;border:1px solid #dadce0;border-radius:13px;display:grid;place-items:center;background:#f8fafd;flex-shrink:0}
-.phone-body{height:62px;width:31px;background:#202124;border-radius:5px;border:3px solid #3c4043;position:relative}
-.phone-body:before{content:"";position:absolute;top:3px;left:8px;width:9px;height:3px;background:#777;border-radius:4px}
-.device-name{font-size:18px;font-weight:500;margin-bottom:10px}
-.muted{font-size:14px;color:#5f6368;line-height:1.6}
-.battery{margin-top:7px;font-size:14px;color:#5f6368}
-.batterybar{height:5px;background:#e8eaed;border-radius:5px;margin-top:9px;overflow:hidden}
-.batterybar div{height:100%;width:78%;background:#188038}
-hr{border:0;border-top:1px solid #e8eaed;margin:25px 0}
-.actions{display:flex;flex-direction:column;gap:5px}
-.action{display:flex;align-items:center;gap:16px;width:100%;border:0;background:white;text-align:left;padding:15px 12px;border-radius:12px;cursor:pointer;color:#202124}
-.action:hover{background:#f1f3f4}
-.action.selected{background:#e8f0fe}
-.actionicon{font-size:24px;color:#5f6368;width:25px;text-align:center}
-.action strong{display:block;font-size:15px;font-weight:500;margin-bottom:5px}
-.action small{display:block;color:#5f6368;font-size:12px;line-height:1.5}
-.arrow{margin-left:auto;color:#5f6368}
-.primary{border:0;border-radius:24px;background:#1a73e8;color:white;padding:12px 18px;cursor:pointer;font-weight:500}
-.secondary{border:1px solid #dadce0;border-radius:24px;background:white;padding:11px 16px;color:#1967d2;cursor:pointer}
-.primary:hover{background:#1765cc}
-.secondary:hover{background:#f6fafe}
-.locbtn{width:100%;margin-top:20px}
-.disclaimer{font-size:11px;color:#80868b;line-height:1.5;margin-top:18px}
-.mapwrap{position:relative;min-width:0;background:#e9edf2}
-#map{height:100%;width:100%;min-height:450px;background:#e8eaed}
-.mapcontrols{position:absolute;right:18px;top:18px;z-index:400;display:flex;flex-direction:column;gap:8px}
-.mapcontrol{width:44px;height:44px;border:0;border-radius:8px;background:white;box-shadow:0 1px 5px #0002;font-size:23px;color:#5f6368;cursor:pointer}
-.mapfooter{position:absolute;bottom:0;left:0;right:0;background:#ffffffdf;z-index:400;padding:8px 12px;display:flex;justify-content:space-between;font-size:11px;color:#5f6368}
-.mapbadge{position:absolute;top:18px;left:18px;z-index:400;background:white;border-radius:24px;padding:10px 15px;box-shadow:0 1px 5px #0002;font-size:13px;color:#3c4043}
-.mapbadge span{color:#188038}
-.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:#303134;color:white;padding:14px 20px;border-radius:8px;font-size:14px;z-index:1000;max-width:90%;display:none;box-shadow:0 3px 12px #0003}
-.overlay{position:fixed;inset:0;background:#0005;z-index:1000;display:none;align-items:center;justify-content:center;padding:20px}
-.dialog{width:min(420px,100%);background:white;border-radius:22px;padding:25px;box-shadow:0 10px 35px #0003}
-.dialog h3{font-size:21px;font-weight:500;margin-top:0}
-.dialog p{font-size:14px;line-height:1.65;color:#5f6368}
-.dialog-actions{display:flex;justify-content:flex-end;gap:10px;margin-top:22px}
-@media(max-width:900px){
- .topbar{height:65px;padding:0 14px;gap:9px}
- .google{font-size:23px}.top-title{font-size:17px}
- .top-right{gap:10px}.app{height:calc(100vh - 65px);grid-template-columns:58px minmax(0,1fr);grid-template-rows:minmax(310px,45%) minmax(300px,55%);min-height:650px}
- .nav{grid-column:1;grid-row:1 / 3}
- .sidebar{grid-column:2;grid-row:1;padding:18px}
- .mapwrap{grid-column:2;grid-row:2}
- #map{min-height:300px}
- .navitem{font-size:10px;margin:0 4px 8px}
- .device-name{font-size:16px}
- .phone-art{height:72px;width:56px}
- .phone-body{height:53px;width:27px}
- hr{margin:15px 0}
- .actions{display:grid;grid-template-columns:1fr 1fr}
- .action{gap:8px;padding:10px 8px}
- .action small{font-size:11px}
- .actionicon{font-size:20px;width:20px}
- .locbtn{margin-top:12px}
- .disclaimer{margin-top:10px}
-}
-@media(max-width:420px){
- .top-title{font-size:14px}
- .google{font-size:20px}
- .topbar{gap:6px}
- .avatar{width:32px;height:32px}
- .app{grid-template-rows:minmax(335px,52%) minmax(270px,48%)}
- .sidebar{padding:14px}
-}
-</style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#030813">
+  <title>SCYBER ONX — Location Share</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
 </head>
 <body>
 <header class="topbar">
-  <div class="google" aria-label="Google">
-    <span class="g1">G</span><span class="g2">o</span><span class="g3">o</span><span class="g4">g</span><span class="g5">l</span><span class="g6">e</span>
+  <div class="brand"><span class="logo">SX</span>
+    <div><b>SCYBER <span>ONX</span></b><small>SECURE · LOCATE · PROTECT</small></div>
   </div>
-  <div class="top-title">Temukan Perangkat Saya</div>
-  <div class="top-right"><span style="font-size:23px">⠿</span><div class="avatar">A</div></div>
+  <span class="online"><i></i> LOCATION DASHBOARD</span>
 </header>
 
-<div class="app">
-  <nav class="nav">
-    <div class="navitem active"><span class="navicon">▣</span>Perangkat</div>
-    <div class="navitem" id="settingsNav"><span class="navicon">⚙</span>Setelan</div>
-  </nav>
-
-  <aside class="sidebar">
-    <div class="back">‹ &nbsp; Perangkat Anda</div>
-    <div class="device-head">
-      <div class="phone-art"><div class="phone-body"></div></div>
-      <div>
-        <div class="device-name">Perangkat Saya</div>
-        <div class="muted" id="lastSeen">Lokasi belum diperbarui</div>
-        <div class="muted" id="locationText">Lokasi tidak tersedia</div>
-        <div class="battery">▰ &nbsp; <span id="batteryText">Status baterai tidak diketahui</span></div>
-        <div class="batterybar"><div id="batteryBar" style="width:0;background:#9aa0a6"></div></div>
-      </div>
-    </div>
-
-    <button class="primary locbtn" id="locateBtn">Perbarui lokasi perangkat ini</button>
-    <div class="muted" style="font-size:12px;margin-top:9px">
-      Meminta izin lokasi dari perangkat yang sedang membuka website ini.
-    </div>
-
-    <hr>
-    <div class="actions">
-      <button class="action selected" id="soundBtn">
-        <span class="actionicon">♫</span>
-        <span><strong>Putar suara</strong><small>Demo suara pada browser ini</small></span>
-        <span class="arrow">›</span>
-      </button>
-      <button class="action" id="secureBtn">
-        <span class="actionicon">♙</span>
-        <span><strong>Amankan perangkat</strong><small>Demo simulasi pengamanan</small></span>
-        <span class="arrow">›</span>
-      </button>
-      <button class="action" id="eraseBtn">
-        <span class="actionicon">▤</span>
-        <span><strong>Hapus perangkat</strong><small>Info tentang penghapusan data</small></span>
-        <span class="arrow">›</span>
-      </button>
-    </div>
-    <div class="disclaimer">
-      Ini adalah proyek demo independen, bukan layanan resmi Google.
-      Tombol pengamanan dan penghapusan tidak mengubah perangkat.
-    </div>
-  </aside>
-
-  <section class="mapwrap">
-    <div class="mapbadge"><span>●</span> &nbsp; Peta perangkat</div>
-    <div id="map"></div>
-    <div class="mapcontrols">
-      <button class="mapcontrol" id="fullBtn" title="Layar penuh">⛶</button>
-      <button class="mapcontrol" id="zoomIn" title="Perbesar">+</button>
-      <button class="mapcontrol" id="zoomOut" title="Perkecil">−</button>
-      <button class="mapcontrol" id="myLocation" title="Lokasi awal">◎</button>
-    </div>
-    <div class="mapfooter">
-      <span>© OpenStreetMap contributors</span>
-      <span id="mapCoordinates">Peta umum · Indonesia</span>
-    </div>
+<main>
+  <section class="hero">
+    <span class="eyebrow">DEVICE LOCATION CENTER</span>
+    <h1>Find your <span>device.</span></h1>
+    <p>Dashboard untuk melihat lokasi perangkat yang membagikan koordinatnya secara sadar.</p>
   </section>
-</div>
 
-<div class="toast" id="toast"></div>
+  <section class="grid">
+    <aside class="panel">
+      <div class="panel-heading"><span>▣</span> PERANGKAT</div>
+      <div class="device">
+        <div class="device-icon">▯</div>
+        <div><b>Perangkat saya</b><small id="deviceStatus">Belum terhubung</small></div>
+      </div>
 
-<div class="overlay" id="overlay">
-  <div class="dialog">
-    <h3 id="dialogTitle">Informasi</h3>
-    <p id="dialogText"></p>
-    <div class="dialog-actions">
-      <button class="secondary" id="cancelDialog">Tutup</button>
-      <button class="primary" id="confirmDialog">Mengerti</button>
-    </div>
-  </div>
-</div>
+      <div class="status-card">
+        <small>STATUS LOKASI</small>
+        <h3 id="statusTitle">Menunggu perangkat</h3>
+        <p id="statusText">Bagikan lokasi dari perangkat sumber untuk menampilkan titik pada peta.</p>
+      </div>
+
+      <button class="btn primary" id="shareBtn">Bagikan lokasi perangkat ini</button>
+      <button class="btn secondary" id="stopBtn">Hentikan berbagi lokasi</button>
+
+      <div class="field-label">KOORDINAT TERAKHIR</div>
+      <div class="coordinate" id="coords">Belum tersedia</div>
+
+      <div class="field-label">PEMBARUAN TERAKHIR</div>
+      <div class="coordinate" id="updated">Belum tersedia</div>
+
+      <button class="btn secondary" id="copyBtn">Salin tautan lokasi</button>
+      <div class="notice">
+        Lokasi hanya dibagikan setelah pemilik perangkat menekan tombol dan menyetujui izin browser. Jangan bagikan tautan pribadi kepada orang yang tidak dipercaya.
+      </div>
+    </aside>
+
+    <section class="panel map-panel">
+      <div class="map-heading">
+        <div><small>LIVE LOCATION</small><h2>Peta perangkat</h2></div>
+        <span class="demo-badge" id="mapBadge">MENUNGGU LOKASI</span>
+      </div>
+      <div id="map"></div>
+      <div class="map-footer">
+        <span>© OpenStreetMap</span>
+        <span id="mapInfo">Peta umum · Indonesia</span>
+      </div>
+    </section>
+  </section>
+
+  <section class="panel instructions">
+    <h2>Cara menghubungkan dua HP</h2>
+    <ol>
+      <li>Host website ini melalui HTTPS.</li>
+      <li>Buka website pada HP yang akan membagikan lokasi.</li>
+      <li>Tekan tombol berbagi lokasi dan setujui permintaan browser.</li>
+      <li>Salin tautan lokasi, lalu kirim secara pribadi ke HP penerima.</li>
+      <li>Buka tautan itu pada HP penerima untuk melihat titik yang dibagikan.</li>
+    </ol>
+    <p class="notice">Versi ini membagikan koordinat melalui tautan. Untuk sinkronisasi otomatis dua arah, diperlukan backend dan autentikasi yang aman.</p>
+  </section>
+</main>
+
+<footer>SCYBER ONX · PRIVACY FIRST</footer>
 
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-<script>
-const $ = id => document.getElementById(id);
-const map = L.map('map', {zoomControl:false}).setView([-2.5,118],5);
-
-L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{
-  maxZoom:19,
-  attribution:'&copy; OpenStreetMap contributors'
-}).addTo(map);
-
-let marker = null;
-let accuracyCircle = null;
-let currentPosition = null;
-let toastTimer;
-
-function toast(text){
-  const el=$('toast');
-  el.textContent=text;
-  el.style.display='block';
-  clearTimeout(toastTimer);
-  toastTimer=setTimeout(()=>el.style.display='none',4000);
-}
-
-function openDialog(title,text,confirmLabel='Mengerti',callback=null){
-  $('dialogTitle').textContent=title;
-  $('dialogText').textContent=text;
-  $('confirmDialog').textContent=confirmLabel;
-  $('overlay').style.display='flex';
-  $('confirmDialog').onclick=()=>{
-    $('overlay').style.display='none';
-    if(callback) callback();
-  };
-}
-$('cancelDialog').onclick=()=>$('overlay').style.display='none';
-$('overlay').addEventListener('click',e=>{
-  if(e.target===$('overlay')) $('overlay').style.display='none';
-});
-
-function showPosition(lat,lon,accuracy){
-  currentPosition={lat,lon,accuracy};
-  if(marker) map.removeLayer(marker);
-  if(accuracyCircle) map.removeLayer(accuracyCircle);
-
-  marker=L.marker([lat,lon]).addTo(map)
-    .bindPopup('Lokasi perangkat ini<br>Lokasi diperoleh dengan izin browser.')
-    .openPopup();
-
-  if(accuracy){
-    accuracyCircle=L.circle([lat,lon],{
-      radius:accuracy,color:'#4285f4',weight:1,fillOpacity:.09
-    }).addTo(map);
-  }
-
-  map.setView([lat,lon],16);
-  $('lastSeen').textContent='Lokasi diperbarui barusan';
-  $('locationText').textContent=lat.toFixed(5)+', '+lon.toFixed(5);
-  $('mapCoordinates').textContent=lat.toFixed(5)+', '+lon.toFixed(5);
-  $('locateBtn').textContent='Perbarui lokasi lagi';
-  toast('Lokasi perangkat ini berhasil diperbarui.');
-}
-
-$('locateBtn').onclick=()=>{
-  if(!navigator.geolocation){
-    toast('Browser ini tidak mendukung geolokasi.');
-    return;
-  }
-  $('locateBtn').disabled=true;
-  $('locateBtn').textContent='Meminta izin lokasi…';
-  navigator.geolocation.getCurrentPosition(
-    pos=>{
-      showPosition(pos.coords.latitude,pos.coords.longitude,pos.coords.accuracy);
-      $('locateBtn').disabled=false;
-    },
-    err=>{
-      $('locateBtn').disabled=false;
-      $('locateBtn').textContent='Coba perbarui lokasi';
-      const msg=err.code===1?'Izin lokasi ditolak. Izinkan lokasi melalui pengaturan browser.':
-        err.code===2?'Lokasi belum tersedia. Periksa GPS dan koneksi internet.':
-        'Permintaan lokasi kehabisan waktu. Coba lagi.';
-      toast(msg);
-    },
-    {enableHighAccuracy:true,timeout:20000,maximumAge:0}
-  );
-};
-
-$('soundBtn').onclick=()=>{
-  openDialog('Putar suara','Mode demo: tombol ini tidak membunyikan atau mengendalikan perangkat lain. Layanan resmi mungkin menyediakan fitur suara jika perangkat dan akun memenuhi persyaratan.');
-};
-
-$('secureBtn').onclick=()=>{
-  openDialog('Amankan perangkat','Mode demo: website ini tidak terhubung ke akun Google atau sistem penguncian perangkat. Untuk mengamankan HP yang hilang, gunakan layanan resmi Find Hub/Temukan Perangkat Saya.');
-};
-
-$('eraseBtn').onclick=()=>{
-  openDialog('Hapus perangkat','Penghapusan jarak jauh dapat menghilangkan data secara permanen. Demo ini tidak dapat menghapus data apa pun. Gunakan layanan resmi Google dan pastikan kamu memahami konsekuensinya.');
-};
-
-$('settingsNav').onclick=()=>{
-  openDialog('Setelan demo','Website ini tidak terhubung ke akun Google. Tidak ada akun, daftar perangkat Google, atau riwayat lokasi yang disimpan.');
-};
-
-$('zoomIn').onclick=()=>map.zoomIn();
-$('zoomOut').onclick=()=>map.zoomOut();
-$('myLocation').onclick=()=>{
-  if(currentPosition) map.setView([currentPosition.lat,currentPosition.lon],16);
-  else map.setView([-2.5,118],5);
-};
-$('fullBtn').onclick=()=>{
-  const el=document.querySelector('.mapwrap');
-  if(!document.fullscreenElement && el.requestFullscreen) el.requestFullscreen();
-  else if(document.exitFullscreen) document.exitFullscreen();
-};
-
-setTimeout(()=>map.invalidateSize(),250);
-</script>
+<script src="script.js"></script>
 </body>
 </html>
