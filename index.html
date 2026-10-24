@@ -2,86 +2,439 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="theme-color" content="#030813">
-  <title>SCYBER ONX — Location Share</title>
-  <link rel="stylesheet" href="style.css">
-  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GeoTrack — Location Simulator</title>
+<style>
+:root {
+  --bg: #070b14;
+  --panel: #111827;
+  --muted: #8491a8;
+  --blue: #4387ff;
+  --purple: #8954ff;
+  --green: #31e6a0;
+}
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  background: var(--bg);
+  color: #f7f9ff;
+  font-family: Inter, Arial, sans-serif;
+}
+button, input { font: inherit; }
+.app {
+  max-width: 520px;
+  min-height: 100vh;
+  margin: auto;
+  padding: 20px 16px 35px;
+  background:
+    radial-gradient(ellipse at 50% 0%, #14234a 0%, transparent 45%),
+    var(--bg);
+}
+.top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 28px;
+}
+.brand {
+  font-size: 25px;
+  font-weight: 900;
+  letter-spacing: -1px;
+}
+.brand span {
+  background: linear-gradient(90deg, #4a92ff, #a56aff);
+  -webkit-background-clip: text;
+  color: transparent;
+}
+.status {
+  color: var(--green);
+  font-size: 11px;
+  padding: 8px 10px;
+  border: 1px solid #1e654f;
+  border-radius: 30px;
+  background: #09251f;
+}
+.hero { text-align: center; margin-bottom: 25px; }
+.hero h1 {
+  font-size: 29px;
+  line-height: 1.2;
+  margin: 0 0 10px;
+}
+.hero h1 span {
+  background: linear-gradient(90deg, #4598ff, #a36aff);
+  -webkit-background-clip: text;
+  color: transparent;
+}
+.hero p {
+  color: var(--muted);
+  font-size: 13px;
+  line-height: 1.7;
+  margin: 0 auto;
+  max-width: 340px;
+}
+.panel {
+  background: linear-gradient(145deg, #172033, #101725);
+  border: 1px solid #263249;
+  border-radius: 23px;
+  padding: 20px;
+  margin-bottom: 17px;
+  box-shadow: 0 15px 40px #0002;
+}
+.label {
+  display: block;
+  color: #b4bfd3;
+  font-size: 12px;
+  margin-bottom: 10px;
+}
+.input-wrap {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  background: #090f1c;
+  border: 1px solid #2a3650;
+  border-radius: 13px;
+  padding: 0 13px;
+}
+.input-wrap span { color: #90a6ca; }
+input {
+  width: 100%;
+  min-width: 0;
+  background: transparent;
+  border: 0;
+  outline: 0;
+  padding: 17px 0;
+  color: white;
+}
+input::placeholder { color: #637089; }
+.main-btn {
+  width: 100%;
+  margin-top: 17px;
+  padding: 16px;
+  border: 0;
+  border-radius: 14px;
+  color: white;
+  font-weight: 800;
+  background: linear-gradient(100deg, #4388ff, #8b4dff);
+  box-shadow: 0 5px 22px #654cff35;
+  cursor: pointer;
+  transition: transform .2s, filter .2s;
+}
+.main-btn:hover { filter: brightness(1.12); }
+.main-btn:active { transform: scale(.98); }
+.main-btn:disabled { opacity: .7; cursor: wait; }
+.notice {
+  color: #a7b5ca;
+  font-size: 11px;
+  line-height: 1.6;
+  margin: 13px 0 0;
+}
+.notice strong { color: #ffd27a; }
+.result {
+  display: none;
+  animation: appear .5s ease;
+}
+.result.show { display: block; }
+@keyframes appear {
+  from { opacity: 0; transform: translateY(12px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.result-head {
+  display: flex;
+  gap: 13px;
+  align-items: center;
+  margin-bottom: 22px;
+}
+.pin-icon {
+  display: grid;
+  place-items: center;
+  width: 52px;
+  height: 52px;
+  border-radius: 16px;
+  background: #0b3a32;
+  font-size: 24px;
+}
+.result-head h2 { font-size: 16px; margin: 0 0 6px; }
+.result-head p { color: var(--green); font-size: 11px; margin: 0; }
+.demo-badge {
+  display: inline-block;
+  font-size: 10px;
+  color: #ffd68a;
+  border: 1px solid #745626;
+  background: #30230e;
+  border-radius: 6px;
+  padding: 5px 8px;
+  margin-bottom: 17px;
+}
+.data-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 15px;
+  padding: 14px 0;
+  border-bottom: 1px solid #263144;
+  font-size: 12px;
+}
+.data-row:last-child { border: 0; }
+.data-row .key { color: #8593aa; }
+.data-row .value {
+  text-align: right;
+  overflow-wrap: anywhere;
+  color: #e8edfa;
+  font-weight: 600;
+}
+.value.green { color: var(--green); }
+.map {
+  position: relative;
+  height: 260px;
+  overflow: hidden;
+  border-radius: 18px;
+  border: 1px solid #334b55;
+  background: #d8e2d5;
+  margin-top: 18px;
+  color: #25392f;
+}
+.map-art { position: absolute; inset: 0; width: 100%; height: 100%; }
+.map-label {
+  position: absolute;
+  font-size: 12px;
+  color: #55675c;
+  text-shadow: 0 1px white;
+}
+.map-label.a { left: 8%; top: 17%; }
+.map-label.b { right: 8%; top: 40%; }
+.map-label.c { left: 14%; bottom: 15%; }
+.map-label.d { right: 10%; bottom: 9%; }
+.map-pin {
+  position: absolute;
+  top: 47%; left: 52%;
+  transform: translate(-50%,-50%);
+  font-size: 30px;
+  filter: drop-shadow(0 3px 3px #0004);
+}
+.map-caption {
+  position: absolute;
+  bottom: 12px; left: 12px;
+  background: white;
+  border-radius: 8px;
+  padding: 9px 12px;
+  box-shadow: 0 3px 12px #0002;
+  font-size: 11px;
+  color: #243248;
+}
+.map-caption small { display: block; margin-top: 4px; color: #738095; }
+.map-controls {
+  position: absolute; top: 12px; left: 12px;
+  display: grid;
+  gap: 4px;
+}
+.map-controls button {
+  width: 32px; height: 32px;
+  background: white; border: 0; border-radius: 7px;
+  color: #243248; font-size: 20px; cursor: pointer;
+}
+.map-footer {
+  font-size: 10px;
+  color: var(--muted);
+  margin-top: 10px;
+  line-height: 1.6;
+}
+.bottom {
+  text-align: center;
+  padding: 17px 0 0;
+  color: #59667b;
+  font-size: 10px;
+  line-height: 1.8;
+}
+.loader {
+  display: none;
+  text-align: center;
+  color: #b7c6e2;
+  font-size: 12px;
+  margin-top: 14px;
+}
+.loader.show { display: block; }
+.dot {
+  display: inline-block;
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  background: #9c77ff;
+  margin: 0 3px;
+  animation: pulse .8s infinite alternate;
+}
+.dot:nth-child(2) { animation-delay: .2s; }
+.dot:nth-child(3) { animation-delay: .4s; }
+@keyframes pulse { to { opacity: .2; transform: translateY(-3px); } }
+</style>
 </head>
 <body>
-<header class="topbar">
-  <div class="brand"><span class="logo">SX</span>
-    <div><b>SCYBER <span>ONX</span></b><small>SECURE · LOCATE · PROTECT</small></div>
-  </div>
-  <span class="online"><i></i> LOCATION DASHBOARD</span>
-</header>
+<main class="app">
+  <header class="top">
+    <div class="brand">Geo<span>Track</span></div>
+    <div class="status">● SIMULATOR AKTIF</div>
+  </header>
 
-<main>
   <section class="hero">
-    <span class="eyebrow">DEVICE LOCATION CENTER</span>
-    <h1>Find your <span>device.</span></h1>
-    <p>Dashboard untuk melihat lokasi perangkat yang membagikan koordinatnya secara sadar.</p>
+    <h1>Location <span>Simulator</span></h1>
+    <p>Demo antarmuka pemindaian dan visualisasi data lokasi untuk latihan cybersecurity.</p>
   </section>
 
-  <section class="grid">
-    <aside class="panel">
-      <div class="panel-heading"><span>▣</span> PERANGKAT</div>
-      <div class="device">
-        <div class="device-icon">▯</div>
-        <div><b>Perangkat saya</b><small id="deviceStatus">Belum terhubung</small></div>
-      </div>
-
-      <div class="status-card">
-        <small>STATUS LOKASI</small>
-        <h3 id="statusTitle">Menunggu perangkat</h3>
-        <p id="statusText">Bagikan lokasi dari perangkat sumber untuk menampilkan titik pada peta.</p>
-      </div>
-
-      <button class="btn primary" id="shareBtn">Bagikan lokasi perangkat ini</button>
-      <button class="btn secondary" id="stopBtn">Hentikan berbagi lokasi</button>
-
-      <div class="field-label">KOORDINAT TERAKHIR</div>
-      <div class="coordinate" id="coords">Belum tersedia</div>
-
-      <div class="field-label">PEMBARUAN TERAKHIR</div>
-      <div class="coordinate" id="updated">Belum tersedia</div>
-
-      <button class="btn secondary" id="copyBtn">Salin tautan lokasi</button>
-      <div class="notice">
-        Lokasi hanya dibagikan setelah pemilik perangkat menekan tombol dan menyetujui izin browser. Jangan bagikan tautan pribadi kepada orang yang tidak dipercaya.
-      </div>
-    </aside>
-
-    <section class="panel map-panel">
-      <div class="map-heading">
-        <div><small>LIVE LOCATION</small><h2>Peta perangkat</h2></div>
-        <span class="demo-badge" id="mapBadge">MENUNGGU LOKASI</span>
-      </div>
-      <div id="map"></div>
-      <div class="map-footer">
-        <span>© OpenStreetMap</span>
-        <span id="mapInfo">Peta umum · Indonesia</span>
-      </div>
-    </section>
+  <section class="panel">
+    <label class="label" for="phone">Nomor telepon untuk simulasi</label>
+    <div class="input-wrap">
+      <span>☎</span>
+      <input id="phone" type="tel" placeholder="+62 812 3456 7890"
+        maxlength="20" autocomplete="off">
+    </div>
+    <button class="main-btn" id="scanBtn" onclick="startDemo()">
+      ⌕ &nbsp; Mulai Simulasi
+    </button>
+    <div class="loader" id="loader">
+      Menjalankan demo <span class="dot"></span><span class="dot"></span><span class="dot"></span>
+    </div>
+    <p class="notice">
+      <strong>MODE DEMO:</strong> nomor hanya digunakan sebagai input tampilan.
+      Tidak ada pesan yang dikirim dan tidak ada lokasi orang yang dilacak.
+    </p>
   </section>
 
-  <section class="panel instructions">
-    <h2>Cara menghubungkan dua HP</h2>
-    <ol>
-      <li>Host website ini melalui HTTPS.</li>
-      <li>Buka website pada HP yang akan membagikan lokasi.</li>
-      <li>Tekan tombol berbagi lokasi dan setujui permintaan browser.</li>
-      <li>Salin tautan lokasi, lalu kirim secara pribadi ke HP penerima.</li>
-      <li>Buka tautan itu pada HP penerima untuk melihat titik yang dibagikan.</li>
-    </ol>
-    <p class="notice">Versi ini membagikan koordinat melalui tautan. Untuk sinkronisasi otomatis dua arah, diperlukan backend dan autentikasi yang aman.</p>
+  <section class="panel result" id="result">
+    <div class="result-head">
+      <div class="pin-icon">📍</div>
+      <div>
+        <h2>Hasil Simulasi</h2>
+        <p>● Demo berhasil dijalankan</p>
+      </div>
+    </div>
+
+    <span class="demo-badge">⚠ DATA CONTOH — BUKAN LOKASI NYATA</span>
+
+    <div class="data-row">
+      <span class="key">Nomor input</span>
+      <span class="value" id="outPhone">—</span>
+    </div>
+    <div class="data-row">
+      <span class="key">Koordinat GPS</span>
+      <span class="value green">Data tidak tersedia</span>
+    </div>
+    <div class="data-row">
+      <span class="key">Status GPS</span>
+      <span class="value">Tidak diakses</span>
+    </div>
+    <div class="data-row">
+      <span class="key">Status perangkat</span>
+      <span class="value">Tidak terhubung</span>
+    </div>
+    <div class="data-row">
+      <span class="key">Akurasi</span>
+      <span class="value">Tidak tersedia</span>
+    </div>
+    <div class="data-row">
+      <span class="key">Sumber data</span>
+      <span class="value">Simulasi lokal</span>
+    </div>
+
+    <div class="map" id="map">
+      <svg class="map-art" viewBox="0 0 400 260"
+           preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+        <rect width="400" height="260" fill="#dce6d5"/>
+        <path d="M-20 55 L100 85 175 30 245 80 430 25"
+          stroke="#f5f0df" stroke-width="17" fill="none"/>
+        <path d="M-20 55 L100 85 175 30 245 80 430 25"
+          stroke="#c6c5ae" stroke-width="1" fill="none"/>
+        <path d="M20 -10 L90 80 65 150 130 280"
+          stroke="#f6f1df" stroke-width="13" fill="none"/>
+        <path d="M20 -10 L90 80 65 150 130 280"
+          stroke="#c6c5ae" stroke-width="1" fill="none"/>
+        <path d="M310 -10 L265 65 320 140 250 280"
+          stroke="#f7f1df" stroke-width="15" fill="none"/>
+        <path d="M310 -10 L265 65 320 140 250 280"
+          stroke="#c6c5ae" stroke-width="1" fill="none"/>
+        <path d="M-20 205 L110 175 210 220 430 170"
+          stroke="#f8f1dc" stroke-width="12" fill="none"/>
+        <path d="M-20 205 L110 175 210 220 430 170"
+          stroke="#c6c5ae" stroke-width="1" fill="none"/>
+        <path d="M155 100 L180 115 205 110 220 140 200 165 170 155Z"
+          fill="#b4d8ad" opacity=".9"/>
+        <path d="M-10 245 Q120 210 190 250 T420 230"
+          stroke="#a6cfe0" stroke-width="7" fill="none"/>
+      </svg>
+      <span class="map-label a">Jalan Utama</span>
+      <span class="map-label b">Area Kota</span>
+      <span class="map-label c">Jalan Selatan</span>
+      <span class="map-label d">Area Hijau</span>
+      <span class="map-pin">📍</span>
+      <div class="map-controls">
+        <button onclick="zoomMap(1.15)" aria-label="Perbesar peta">+</button>
+        <button onclick="zoomMap(0.87)" aria-label="Perkecil peta">−</button>
+      </div>
+      <div class="map-caption">
+        Peta ilustrasi
+        <small>Bukan lokasi perangkat</small>
+      </div>
+    </div>
+    <p class="map-footer">
+      Peta ini hanya ilustrasi antarmuka. Tidak menampilkan posisi nomor
+      telepon atau perangkat sungguhan.
+    </p>
   </section>
+
+  <footer class="bottom">
+    GEOTRACK UI SIMULATOR · V1.0<br>
+    Dibuat untuk pembelajaran web dan cybersecurity.<br>
+    Semua hasil pemindaian merupakan simulasi.
+  </footer>
 </main>
 
-<footer>SCYBER ONX · PRIVACY FIRST</footer>
+<script>
+const phoneInput = document.getElementById("phone");
+const scanBtn = document.getElementById("scanBtn");
+const loader = document.getElementById("loader");
+const result = document.getElementById("result");
 
-<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-<script src="script.js"></script>
+function startDemo() {
+  const phone = phoneInput.value.trim();
+
+  if (!phone) {
+    phoneInput.focus();
+    phoneInput.placeholder = "Masukkan nomor untuk demo";
+    return;
+  }
+
+  if (!/^[+\d\s()-]{6,20}$/.test(phone)) {
+    alert("Masukkan format nomor yang valid untuk simulasi.");
+    phoneInput.focus();
+    return;
+  }
+
+  scanBtn.disabled = true;
+  scanBtn.textContent = "Menjalankan simulasi...";
+  loader.classList.add("show");
+  result.classList.remove("show");
+
+  // Hanya animasi demo, tidak menghubungi server atau melacak nomor.
+  setTimeout(() => {
+    document.getElementById("outPhone").textContent = phone;
+    loader.classList.remove("show");
+    result.classList.add("show");
+    scanBtn.disabled = false;
+    scanBtn.innerHTML = "↻ &nbsp; Ulangi Simulasi";
+    result.scrollIntoView({ behavior: "smooth", block: "start" });
+  }, 1400);
+}
+
+let mapScale = 1;
+function zoomMap(factor) {
+  const map = document.querySelector(".map-art");
+  mapScale = Math.max(.8, Math.min(2, mapScale * factor));
+  map.style.transform = `scale(${mapScale})`;
+  map.style.transition = "transform .25s ease";
+}
+
+// Enter juga bisa menjalankan simulasi.
+phoneInput.addEventListener("keydown", (event) => {
+  if (event.key === "Enter") startDemo();
+});
+</script>
 </body>
 </html>
