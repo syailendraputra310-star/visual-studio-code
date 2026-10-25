@@ -4,437 +4,543 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>GeoTrack — Location Simulator</title>
+<title>NetLock Premium</title>
+
 <style>
 :root {
   --bg: #070b14;
-  --panel: #111827;
-  --muted: #8491a8;
-  --blue: #4387ff;
-  --purple: #8954ff;
-  --green: #31e6a0;
+  --panel: #101827;
+  --border: #22344c;
+  --blue: #00b7ff;
+  --green: #21e6a1;
+  --red: #ff526b;
+  --text: #eaf3ff;
+  --muted: #8ba0ba;
 }
-* { box-sizing: border-box; }
-body {
+
+* {
+  box-sizing: border-box;
   margin: 0;
-  background: var(--bg);
-  color: #f7f9ff;
-  font-family: Inter, Arial, sans-serif;
+  padding: 0;
 }
-button, input { font: inherit; }
-.app {
-  max-width: 520px;
+
+body {
   min-height: 100vh;
-  margin: auto;
-  padding: 20px 16px 35px;
   background:
-    radial-gradient(ellipse at 50% 0%, #14234a 0%, transparent 45%),
+    radial-gradient(ellipse at top, #102b48 0%, transparent 55%),
     var(--bg);
+  color: var(--text);
+  font-family: Arial, sans-serif;
 }
-.top {
+
+header {
+  padding: 22px 7%;
+  border-bottom: 1px solid var(--border);
   display: flex;
-  justify-content: space-between;
   align-items: center;
-  margin-bottom: 28px;
+  justify-content: space-between;
+  gap: 16px;
 }
+
 .brand {
-  font-size: 25px;
-  font-weight: 900;
-  letter-spacing: -1px;
+  font-size: 23px;
+  font-weight: 800;
+  letter-spacing: 1px;
 }
+
 .brand span {
-  background: linear-gradient(90deg, #4a92ff, #a56aff);
-  -webkit-background-clip: text;
-  color: transparent;
+  color: var(--blue);
 }
-.status {
+
+.tag {
   color: var(--green);
   font-size: 11px;
-  padding: 8px 10px;
-  border: 1px solid #1e654f;
-  border-radius: 30px;
-  background: #09251f;
+  border: 1px solid #176d59;
+  padding: 8px 12px;
+  border-radius: 20px;
 }
-.hero { text-align: center; margin-bottom: 25px; }
-.hero h1 {
-  font-size: 29px;
-  line-height: 1.2;
-  margin: 0 0 10px;
+
+main {
+  max-width: 1100px;
+  margin: auto;
+  padding: 35px 20px;
 }
-.hero h1 span {
-  background: linear-gradient(90deg, #4598ff, #a36aff);
-  -webkit-background-clip: text;
-  color: transparent;
-}
-.hero p {
-  color: var(--muted);
-  font-size: 13px;
-  line-height: 1.7;
-  margin: 0 auto;
-  max-width: 340px;
-}
-.panel {
-  background: linear-gradient(145deg, #172033, #101725);
-  border: 1px solid #263249;
-  border-radius: 23px;
-  padding: 20px;
-  margin-bottom: 17px;
-  box-shadow: 0 15px 40px #0002;
-}
-.label {
-  display: block;
-  color: #b4bfd3;
-  font-size: 12px;
+
+h1 {
+  font-size: clamp(27px, 5vw, 42px);
   margin-bottom: 10px;
 }
-.input-wrap {
-  display: flex;
-  gap: 10px;
-  align-items: center;
-  background: #090f1c;
-  border: 1px solid #2a3650;
-  border-radius: 13px;
-  padding: 0 13px;
-}
-.input-wrap span { color: #90a6ca; }
-input {
-  width: 100%;
-  min-width: 0;
-  background: transparent;
-  border: 0;
-  outline: 0;
-  padding: 17px 0;
-  color: white;
-}
-input::placeholder { color: #637089; }
-.main-btn {
-  width: 100%;
-  margin-top: 17px;
-  padding: 16px;
-  border: 0;
-  border-radius: 14px;
-  color: white;
-  font-weight: 800;
-  background: linear-gradient(100deg, #4388ff, #8b4dff);
-  box-shadow: 0 5px 22px #654cff35;
-  cursor: pointer;
-  transition: transform .2s, filter .2s;
-}
-.main-btn:hover { filter: brightness(1.12); }
-.main-btn:active { transform: scale(.98); }
-.main-btn:disabled { opacity: .7; cursor: wait; }
-.notice {
-  color: #a7b5ca;
-  font-size: 11px;
-  line-height: 1.6;
-  margin: 13px 0 0;
-}
-.notice strong { color: #ffd27a; }
-.result {
-  display: none;
-  animation: appear .5s ease;
-}
-.result.show { display: block; }
-@keyframes appear {
-  from { opacity: 0; transform: translateY(12px); }
-  to { opacity: 1; transform: translateY(0); }
-}
-.result-head {
-  display: flex;
-  gap: 13px;
-  align-items: center;
-  margin-bottom: 22px;
-}
-.pin-icon {
-  display: grid;
-  place-items: center;
-  width: 52px;
-  height: 52px;
-  border-radius: 16px;
-  background: #0b3a32;
-  font-size: 24px;
-}
-.result-head h2 { font-size: 16px; margin: 0 0 6px; }
-.result-head p { color: var(--green); font-size: 11px; margin: 0; }
-.demo-badge {
-  display: inline-block;
-  font-size: 10px;
-  color: #ffd68a;
-  border: 1px solid #745626;
-  background: #30230e;
-  border-radius: 6px;
-  padding: 5px 8px;
-  margin-bottom: 17px;
-}
-.data-row {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  gap: 15px;
-  padding: 14px 0;
-  border-bottom: 1px solid #263144;
-  font-size: 12px;
-}
-.data-row:last-child { border: 0; }
-.data-row .key { color: #8593aa; }
-.data-row .value {
-  text-align: right;
-  overflow-wrap: anywhere;
-  color: #e8edfa;
-  font-weight: 600;
-}
-.value.green { color: var(--green); }
-.map {
-  position: relative;
-  height: 260px;
-  overflow: hidden;
-  border-radius: 18px;
-  border: 1px solid #334b55;
-  background: #d8e2d5;
-  margin-top: 18px;
-  color: #25392f;
-}
-.map-art { position: absolute; inset: 0; width: 100%; height: 100%; }
-.map-label {
-  position: absolute;
-  font-size: 12px;
-  color: #55675c;
-  text-shadow: 0 1px white;
-}
-.map-label.a { left: 8%; top: 17%; }
-.map-label.b { right: 8%; top: 40%; }
-.map-label.c { left: 14%; bottom: 15%; }
-.map-label.d { right: 10%; bottom: 9%; }
-.map-pin {
-  position: absolute;
-  top: 47%; left: 52%;
-  transform: translate(-50%,-50%);
-  font-size: 30px;
-  filter: drop-shadow(0 3px 3px #0004);
-}
-.map-caption {
-  position: absolute;
-  bottom: 12px; left: 12px;
-  background: white;
-  border-radius: 8px;
-  padding: 9px 12px;
-  box-shadow: 0 3px 12px #0002;
-  font-size: 11px;
-  color: #243248;
-}
-.map-caption small { display: block; margin-top: 4px; color: #738095; }
-.map-controls {
-  position: absolute; top: 12px; left: 12px;
-  display: grid;
-  gap: 4px;
-}
-.map-controls button {
-  width: 32px; height: 32px;
-  background: white; border: 0; border-radius: 7px;
-  color: #243248; font-size: 20px; cursor: pointer;
-}
-.map-footer {
-  font-size: 10px;
+
+.subtitle {
   color: var(--muted);
-  margin-top: 10px;
-  line-height: 1.6;
+  line-height: 1.7;
+  margin-bottom: 28px;
 }
-.bottom {
-  text-align: center;
-  padding: 17px 0 0;
-  color: #59667b;
-  font-size: 10px;
-  line-height: 1.8;
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 18px;
 }
-.loader {
-  display: none;
-  text-align: center;
-  color: #b7c6e2;
-  font-size: 12px;
-  margin-top: 14px;
+
+.card {
+  background: rgba(16, 24, 39, .94);
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  padding: 23px;
+  min-width: 0;
+  box-shadow: 0 12px 40px #0002;
 }
-.loader.show { display: block; }
+
+.wide {
+  grid-column: 1 / -1;
+}
+
+.card h2 {
+  font-size: 16px;
+  margin-bottom: 18px;
+}
+
+.status-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.status {
+  font-weight: bold;
+  color: #ffc76a;
+}
+
 .dot {
   display: inline-block;
-  width: 6px; height: 6px;
+  width: 9px;
+  height: 9px;
+  background: #ffc76a;
   border-radius: 50%;
-  background: #9c77ff;
-  margin: 0 3px;
-  animation: pulse .8s infinite alternate;
+  margin-right: 7px;
 }
-.dot:nth-child(2) { animation-delay: .2s; }
-.dot:nth-child(3) { animation-delay: .4s; }
-@keyframes pulse { to { opacity: .2; transform: translateY(-3px); } }
+
+.big-icon {
+  width: 100px;
+  height: 100px;
+  margin: 24px auto;
+  border-radius: 50%;
+  border: 1px solid #164c72;
+  background: #0a2035;
+  display: grid;
+  place-items: center;
+  font-size: 42px;
+  box-shadow: 0 0 35px #00b7ff15;
+}
+
+.actions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+button {
+  border: 0;
+  border-radius: 10px;
+  padding: 14px 10px;
+  cursor: pointer;
+  font-weight: bold;
+  font-size: 13px;
+  transition: .2s;
+}
+
+button:hover {
+  transform: translateY(-2px);
+  filter: brightness(1.12);
+}
+
+button:disabled {
+  opacity: .5;
+  cursor: wait;
+  transform: none;
+}
+
+.lock-btn {
+  background: var(--red);
+  color: #fff;
+}
+
+.unlock-btn {
+  background: var(--blue);
+  color: #00121d;
+}
+
+.secondary-btn {
+  background: #1b2a3e;
+  border: 1px solid #344962;
+  color: var(--text);
+  width: 100%;
+  margin-top: 12px;
+}
+
+.note {
+  margin-top: 16px;
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.7;
+}
+
+.field {
+  margin-bottom: 15px;
+}
+
+label {
+  display: block;
+  font-size: 12px;
+  color: var(--muted);
+  margin-bottom: 8px;
+}
+
+input, select {
+  width: 100%;
+  padding: 12px;
+  border-radius: 9px;
+  border: 1px solid var(--border);
+  color: var(--text);
+  background: #091321;
+  outline: none;
+}
+
+input:focus, select:focus {
+  border-color: var(--blue);
+}
+
+.log {
+  max-height: 190px;
+  overflow-y: auto;
+}
+
+.log-item {
+  padding: 12px 0;
+  border-bottom: 1px solid var(--border);
+  font-size: 12px;
+  color: var(--muted);
+  line-height: 1.6;
+  overflow-wrap: anywhere;
+}
+
+.log-item strong {
+  color: var(--text);
+}
+
+footer {
+  text-align: center;
+  padding: 25px 15px;
+  color: var(--muted);
+  font-size: 11px;
+}
+
+#notice {
+  display: none;
+  padding: 12px;
+  border-radius: 9px;
+  background: #302817;
+  color: #ffda91;
+  font-size: 12px;
+  line-height: 1.6;
+  margin-bottom: 18px;
+  overflow-wrap: anywhere;
+}
+
+@media (max-width: 650px) {
+  header { padding: 18px; }
+  .brand { font-size: 19px; }
+  main { padding: 25px 14px; }
+  .grid { grid-template-columns: 1fr; }
+  .wide { grid-column: auto; }
+  .card { padding: 18px; }
+}
 </style>
 </head>
+
 <body>
-<main class="app">
-  <header class="top">
-    <div class="brand">Geo<span>Track</span></div>
-    <div class="status">● SIMULATOR AKTIF</div>
-  </header>
+<header>
+  <div class="brand">NET<span>LOCK</span></div>
+  <div class="tag">PREMIUM CONTROL</div>
+</header>
 
-  <section class="hero">
-    <h1>Location <span>Simulator</span></h1>
-    <p>Demo antarmuka pemindaian dan visualisasi data lokasi untuk latihan cybersecurity.</p>
-  </section>
+<main>
+  <h1>Wi-Fi Control Center</h1>
+  <p class="subtitle">
+    Dashboard pengelolaan jaringan milik sendiri.
+    Kontrol aktual membutuhkan koneksi ke router yang kompatibel.
+  </p>
 
-  <section class="panel">
-    <label class="label" for="phone">Nomor telepon untuk simulasi</label>
-    <div class="input-wrap">
-      <span>☎</span>
-      <input id="phone" type="tel" placeholder="+62 812 3456 7890"
-        maxlength="20" autocomplete="off">
-    </div>
-    <button class="main-btn" id="scanBtn" onclick="startDemo()">
-      ⌕ &nbsp; Mulai Simulasi
-    </button>
-    <div class="loader" id="loader">
-      Menjalankan demo <span class="dot"></span><span class="dot"></span><span class="dot"></span>
-    </div>
-    <p class="notice">
-      <strong>MODE DEMO:</strong> nomor hanya digunakan sebagai input tampilan.
-      Tidak ada pesan yang dikirim dan tidak ada lokasi orang yang dilacak.
-    </p>
-  </section>
+  <div id="notice">
+    Router belum terhubung. Dashboard ini tidak akan memutus
+    jaringan sungguhan sebelum API router dikonfigurasi.
+  </div>
 
-  <section class="panel result" id="result">
-    <div class="result-head">
-      <div class="pin-icon">📍</div>
-      <div>
-        <h2>Hasil Simulasi</h2>
-        <p>● Demo berhasil dijalankan</p>
+  <div class="grid">
+    <section class="card">
+      <h2>Status Pengendalian</h2>
+      <div class="status-row">
+        <span>Status router</span>
+        <span class="status" id="routerStatus">
+          <span class="dot"></span>Belum terhubung
+        </span>
       </div>
-    </div>
 
-    <span class="demo-badge">⚠ DATA CONTOH — BUKAN LOKASI NYATA</span>
+      <div class="big-icon" id="wifiIcon">⌁</div>
 
-    <div class="data-row">
-      <span class="key">Nomor input</span>
-      <span class="value" id="outPhone">—</span>
-    </div>
-    <div class="data-row">
-      <span class="key">Koordinat GPS</span>
-      <span class="value green">Data tidak tersedia</span>
-    </div>
-    <div class="data-row">
-      <span class="key">Status GPS</span>
-      <span class="value">Tidak diakses</span>
-    </div>
-    <div class="data-row">
-      <span class="key">Status perangkat</span>
-      <span class="value">Tidak terhubung</span>
-    </div>
-    <div class="data-row">
-      <span class="key">Akurasi</span>
-      <span class="value">Tidak tersedia</span>
-    </div>
-    <div class="data-row">
-      <span class="key">Sumber data</span>
-      <span class="value">Simulasi lokal</span>
-    </div>
-
-    <div class="map" id="map">
-      <svg class="map-art" viewBox="0 0 400 260"
-           preserveAspectRatio="xMidYMid slice" aria-hidden="true">
-        <rect width="400" height="260" fill="#dce6d5"/>
-        <path d="M-20 55 L100 85 175 30 245 80 430 25"
-          stroke="#f5f0df" stroke-width="17" fill="none"/>
-        <path d="M-20 55 L100 85 175 30 245 80 430 25"
-          stroke="#c6c5ae" stroke-width="1" fill="none"/>
-        <path d="M20 -10 L90 80 65 150 130 280"
-          stroke="#f6f1df" stroke-width="13" fill="none"/>
-        <path d="M20 -10 L90 80 65 150 130 280"
-          stroke="#c6c5ae" stroke-width="1" fill="none"/>
-        <path d="M310 -10 L265 65 320 140 250 280"
-          stroke="#f7f1df" stroke-width="15" fill="none"/>
-        <path d="M310 -10 L265 65 320 140 250 280"
-          stroke="#c6c5ae" stroke-width="1" fill="none"/>
-        <path d="M-20 205 L110 175 210 220 430 170"
-          stroke="#f8f1dc" stroke-width="12" fill="none"/>
-        <path d="M-20 205 L110 175 210 220 430 170"
-          stroke="#c6c5ae" stroke-width="1" fill="none"/>
-        <path d="M155 100 L180 115 205 110 220 140 200 165 170 155Z"
-          fill="#b4d8ad" opacity=".9"/>
-        <path d="M-10 245 Q120 210 190 250 T420 230"
-          stroke="#a6cfe0" stroke-width="7" fill="none"/>
-      </svg>
-      <span class="map-label a">Jalan Utama</span>
-      <span class="map-label b">Area Kota</span>
-      <span class="map-label c">Jalan Selatan</span>
-      <span class="map-label d">Area Hijau</span>
-      <span class="map-pin">📍</span>
-      <div class="map-controls">
-        <button onclick="zoomMap(1.15)" aria-label="Perbesar peta">+</button>
-        <button onclick="zoomMap(0.87)" aria-label="Perkecil peta">−</button>
+      <div class="status-row">
+        <span>Status Wi-Fi</span>
+        <strong id="wifiStatus">Tidak diketahui</strong>
       </div>
-      <div class="map-caption">
-        Peta ilustrasi
-        <small>Bukan lokasi perangkat</small>
-      </div>
-    </div>
-    <p class="map-footer">
-      Peta ini hanya ilustrasi antarmuka. Tidak menampilkan posisi nomor
-      telepon atau perangkat sungguhan.
-    </p>
-  </section>
 
-  <footer class="bottom">
-    GEOTRACK UI SIMULATOR · V1.0<br>
-    Dibuat untuk pembelajaran web dan cybersecurity.<br>
-    Semua hasil pemindaian merupakan simulasi.
-  </footer>
+      <p class="note" id="details">
+        Hubungkan dashboard dengan backend resmi router.
+      </p>
+    </section>
+
+    <section class="card">
+      <h2>Kontrol Wi-Fi</h2>
+      <p class="subtitle">
+        Kunci atau aktifkan kembali jaringan Wi-Fi pada router
+        yang telah dikonfigurasi.
+      </p>
+
+      <div class="actions">
+        <button class="lock-btn" id="lockBtn">
+          🔒 LOCK WI-FI
+        </button>
+        <button class="unlock-btn" id="unlockBtn">
+          🔓 UNLOCK WI-FI
+        </button>
+      </div>
+
+      <button class="secondary-btn" id="refreshBtn">
+        ↻ Periksa Status Router
+      </button>
+
+      <p class="note">
+        Perintah hanya berhasil jika endpoint backend dan
+        dukungan router tersedia. Jangan menganggap tombol
+        berhasil sebelum menerima konfirmasi dari router.
+      </p>
+    </section>
+
+    <section class="card">
+      <h2>Konfigurasi Koneksi</h2>
+
+      <div class="field">
+        <label for="apiBase">Alamat backend NetLock</label>
+        <input
+          id="apiBase"
+          type="url"
+          placeholder="http://localhost:3000"
+          autocomplete="url">
+      </div>
+
+      <div class="field">
+        <label for="routerName">Nama router</label>
+        <input
+          id="routerName"
+          type="text"
+          placeholder="Contoh: Router Rumah">
+      </div>
+
+      <button class="secondary-btn" id="saveBtn">
+        Simpan Konfigurasi
+      </button>
+
+      <p class="note">
+        Backend harus menyediakan GET /api/wifi/status,
+        POST /api/wifi/lock, dan POST /api/wifi/unlock.
+        Alamat ini bukan alamat admin router secara otomatis.
+      </p>
+    </section>
+
+    <section class="card">
+      <h2>Aktivitas Sistem</h2>
+      <div class="log" id="logs" aria-live="polite"></div>
+      <button class="secondary-btn" id="clearBtn">
+        Bersihkan Riwayat Tampilan
+      </button>
+    </section>
+  </div>
 </main>
 
+<footer>
+  NETLOCK PREMIUM · Router Management Dashboard
+</footer>
+
 <script>
-const phoneInput = document.getElementById("phone");
-const scanBtn = document.getElementById("scanBtn");
-const loader = document.getElementById("loader");
-const result = document.getElementById("result");
+const $ = id => document.getElementById(id);
 
-function startDemo() {
-  const phone = phoneInput.value.trim();
+let busy = false;
 
-  if (!phone) {
-    phoneInput.focus();
-    phoneInput.placeholder = "Masukkan nomor untuk demo";
+function log(message) {
+  const item = document.createElement("div");
+  item.className = "log-item";
+
+  const time = document.createElement("strong");
+  time.textContent = new Date().toLocaleTimeString("id-ID");
+
+  item.append(time, document.createTextNode(" — " + message));
+  $("logs").prepend(item);
+}
+
+function setDisconnected(message) {
+  $("routerStatus").innerHTML =
+    '<span class="dot"></span>Belum terhubung';
+  $("wifiStatus").textContent = "Tidak diketahui";
+  $("wifiIcon").textContent = "⌁";
+  $("notice").style.display = "block";
+  $("details").textContent = message;
+}
+
+function setConnected(data) {
+  $("routerStatus").innerHTML =
+    '<span class="dot"></span>Terhubung';
+  $("routerStatus").style.color = "var(--green)";
+
+  const enabled = data.enabled;
+
+  if (typeof enabled !== "boolean") {
+    $("wifiStatus").textContent = "Status tidak valid";
+    $("wifiIcon").textContent = "?";
+    $("notice").style.display = "block";
+    $("details").textContent =
+      "Backend tidak memberikan nilai enabled yang valid.";
     return;
   }
 
-  if (!/^[+\d\s()-]{6,20}$/.test(phone)) {
-    alert("Masukkan format nomor yang valid untuk simulasi.");
-    phoneInput.focus();
-    return;
+  $("wifiStatus").textContent = enabled ? "AKTIF" : "TERKUNCI";
+  $("wifiStatus").style.color =
+    enabled ? "var(--green)" : "var(--red)";
+
+  $("wifiIcon").textContent = enabled ? "⌁" : "×";
+  $("notice").style.display = "none";
+  $("details").textContent =
+    "Router: " + ($("routerName").value.trim() || "Router Rumah");
+}
+
+function baseUrl() {
+  return $("apiBase").value.trim().replace(/\/+$/, "");
+}
+
+async function request(path, method = "GET") {
+  const base = baseUrl();
+
+  if (!base) {
+    throw new Error("Isi alamat backend NetLock terlebih dahulu.");
   }
 
-  scanBtn.disabled = true;
-  scanBtn.textContent = "Menjalankan simulasi...";
-  loader.classList.add("show");
-  result.classList.remove("show");
+  const url = new URL(base);
 
-  // Hanya animasi demo, tidak menghubungi server atau melacak nomor.
-  setTimeout(() => {
-    document.getElementById("outPhone").textContent = phone;
-    loader.classList.remove("show");
-    result.classList.add("show");
-    scanBtn.disabled = false;
-    scanBtn.innerHTML = "↻ &nbsp; Ulangi Simulasi";
-    result.scrollIntoView({ behavior: "smooth", block: "start" });
-  }, 1400);
+  if (url.protocol !== "https:" && url.hostname !== "localhost"
+      && url.hostname !== "127.0.0.1") {
+    throw new Error("Gunakan HTTPS untuk backend non-lokal.");
+  }
+
+  const response = await fetch(base + path, {
+    method,
+    headers: { "Content-Type": "application/json" },
+    credentials: "omit",
+    signal: AbortSignal.timeout(8000)
+  });
+
+  if (!response.ok) {
+    throw new Error("Backend merespons HTTP " + response.status);
+  }
+
+  return response.json();
 }
 
-let mapScale = 1;
-function zoomMap(factor) {
-  const map = document.querySelector(".map-art");
-  mapScale = Math.max(.8, Math.min(2, mapScale * factor));
-  map.style.transform = `scale(${mapScale})`;
-  map.style.transition = "transform .25s ease";
+async function refreshStatus() {
+  try {
+    const data = await request("/api/wifi/status");
+    if (data.ok !== true) {
+      throw new Error("Backend belum mengonfirmasi status.");
+    }
+    setConnected(data);
+    log("Status router berhasil diperiksa.");
+  } catch (error) {
+    setDisconnected(error.message);
+    log("Pemeriksaan gagal: " + error.message);
+  }
 }
 
-// Enter juga bisa menjalankan simulasi.
-phoneInput.addEventListener("keydown", (event) => {
-  if (event.key === "Enter") startDemo();
+async function controlWifi(action) {
+  if (busy) return;
+
+  const confirmed = confirm(
+    action === "lock"
+      ? "Nonaktifkan Wi-Fi pada router milikmu?"
+      : "Aktifkan kembali Wi-Fi pada router milikmu?"
+  );
+
+  if (!confirmed) return;
+
+  busy = true;
+  $("lockBtn").disabled = true;
+  $("unlockBtn").disabled = true;
+
+  try {
+    const data = await request("/api/wifi/" + action, "POST");
+
+    if (data.ok !== true || typeof data.enabled !== "boolean") {
+      throw new Error("Perintah belum dikonfirmasi oleh backend.");
+    }
+
+    setConnected(data);
+    log("Perintah " + action.toUpperCase() +
+        " dikonfirmasi oleh backend.");
+  } catch (error) {
+    log("Perintah gagal: " + error.message);
+    alert(
+      "Wi-Fi belum diubah.\n\n" + error.message +
+      "\n\nPastikan backend dan integrasi router sudah dikonfigurasi."
+    );
+  } finally {
+    busy = false;
+    $("lockBtn").disabled = false;
+    $("unlockBtn").disabled = false;
+  }
+}
+
+$("lockBtn").addEventListener("click", () => controlWifi("lock"));
+$("unlockBtn").addEventListener("click", () => controlWifi("unlock"));
+$("refreshBtn").addEventListener("click", refreshStatus);
+
+$("saveBtn").addEventListener("click", () => {
+  const base = baseUrl();
+
+  if (base) {
+    try {
+      const parsed = new URL(base);
+      if (parsed.protocol !== "https:" &&
+          parsed.hostname !== "localhost" &&
+          parsed.hostname !== "127.0.0.1") {
+        throw new Error("Gunakan HTTPS untuk backend non-lokal.");
+      }
+    } catch (error) {
+      alert("Alamat backend tidak valid: " + error.message);
+      return;
+    }
+  }
+
+  log("Konfigurasi diperbarui untuk sesi ini.");
+  alert("Konfigurasi digunakan pada sesi halaman ini.");
 });
+
+$("clearBtn").addEventListener("click", () => {
+  $("logs").replaceChildren();
+  log("Riwayat tampilan dibersihkan.");
+});
+
+setDisconnected(
+  "Belum ada koneksi backend. Status Wi-Fi aktual belum diketahui."
+);
+log("NetLock dimulai. Menunggu konfigurasi backend.");
 </script>
 </body>
 </html>
